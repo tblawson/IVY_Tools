@@ -38,9 +38,22 @@ while True:
     duc = results[run]["DUC name"]
     gain = results[run]["DUC gain"]
     nom_V_outs = results[run]["Nom_dV"].keys()
+
     # Print some vital stats for this run
     # (not really necessary, but helps with de-bugging)
     print(f'DUC = {duc}; gain = {gain}; V-out list: {nom_V_outs}\n')
+
+    # Environmental conditions:
+    Tduc_val = results[run]['Tduc_GMH']['value']
+    Tduc_EU = results[run]['Tduc_GMH']['ExpU']
+    Tduc_k = results[run]['Tduc_GMH']['k']
+
+    Hum_val = results[run]['RH']['value']
+    Hum_EU = results[run]['RH']['ExpU']
+    Hum_k = results[run]['RH']['k']
+
+    print(f'________\nTduc = {Tduc_val} +/- {Tduc_EU}, coverage factor = {Tduc_k}')
+    print(f'RH = {Hum_val} +/- {Hum_EU}, coverage factor = {Hum_k}\n---------\n')
 
     for v in nom_V_outs:
         if v == '0.1':
