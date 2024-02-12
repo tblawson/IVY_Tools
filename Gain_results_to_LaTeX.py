@@ -9,12 +9,21 @@ Created on Thu 23/02/2023
 Extract data from IVY_Results.json (or similar results file) and reformat the data to suit a LaTeX report table.
 
 """
-
+import math
 import os
 import json
 
 
 D_B_SLASH = r'\\'  # Double back-slash
+CMC = {1e-3: 5e-9,  # DC-I CMC: keys = nominal I, vals = our best Exp. Uncert.
+       1e-4: 5e-10,
+       1e-5: 5e-11,
+       1e-6: 1e-11,
+       1e-7: 1e-12,
+       1e-8: 2e-13,
+       1e-9: 1.5e-13,
+       1e-10: 5.4e-14,
+       1e-11: 5.6e-15}
 
 # Start with an IVY_Results.json file - can have any name.
 results_path = input('Full path to results directory > ')
@@ -60,10 +69,16 @@ while True:
             G = f'{gain:1.0e}\t'  # Only include gain field for 1st line...
         else:
             G = '\t\t'  # ... blank, otherwise.
+        cmc_statement = ''
         val = results[run]["Nom_dV"][v]["Delta_Iin"]["value"]  # I value
+        nom_I = 10**round(math.log10(abs(val)))
+        cmc = CMC[nom_I]
         exp_u = results[run]["Nom_dV"][v]["Delta_Iin"]["EU"]  # I Exp U
+        reported_exp_u = max(cmc, exp_u)  # I Exp U, constrained by CMC
         k = results[run]["Nom_dV"][v]["Delta_Iin"]["k"]  # coverage factor
+        if reported_exp_u > exp_u:
+            cmc_statement = f' - CMC-LIMITED ({exp_u:1.2e})'
 
         # Put it all together, line-by-line, with appropriate formatting:
-        line = f'{G} & {v} & {val:e} & {exp_u:1.2e} & {k:1.1f} {D_B_SLASH} % {run}'
+        line = f'{G} & {v} & {val:e} & {reported_exp_u:1.2e} & {k:1.1f} {D_B_SLASH} % {run}{cmc_statement}'
         print(line)
