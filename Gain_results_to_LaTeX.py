@@ -80,5 +80,5 @@ while True:
             cmc_statement = f' - CMC-LIMITED ({exp_u:1.2e})'
 
         # Put it all together, line-by-line, with appropriate formatting:
-        line = f'{G} & {v} & {val:e} & {reported_exp_u:1.2e} & {k:1.1f} {D_B_SLASH} % {run}{cmc_statement}'
+        line = f'{G} & {v} & {val:1.6e} & {reported_exp_u:1.2e} & {k:1.1f} {D_B_SLASH} % {run}{cmc_statement}'
         print(line)
